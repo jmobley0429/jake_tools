@@ -206,16 +206,18 @@ class CustomBmeshOperator(CustomOperator):
         return num_faces == 1
 
     def select_edges(self, context, edges, select=True, skip_callback_func=None):
-        try:
-            for edge in edges:
-                edge.select = select
-                if skip_callback_func is not None:
-                    if skip_callback_func(edge):
-                        edge.select = not select
+        for edge in edges:
+            edge.select_set(True)
+        # try:
+        #     for edge in edges:
+        #         edge.select = select
+        #         if skip_callback_func is not None:
+        #             if skip_callback_func(edge):
+        #                 edge.select = not select
 
-        except ReferenceError:
-            self.bmesh(context)
-            self.select_edges(context, edges, select=select)
+        # except ReferenceError:
+        #     self.bmesh(context)
+        #     self.select_edges(context, edges, select=select)
 
 
 class ModalDrawText:

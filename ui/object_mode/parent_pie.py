@@ -22,6 +22,9 @@ class PIE_MT_parent_object_pie(Menu):
         op.type = 'CLEAR'
         op = pie.operator("object.parent_clear", text="Clear Parent (Inverse)")
         op.type = 'CLEAR_INVERSE'
+        op = pie.operator("object.make_child_of", text="Make Child Of")
+        pie.operator('object.deselect_parented_objs')
+
         if ao.type == "CURVE":
             op = pie.operator("object.parent_set", text="Curve Deform")
             op.type = 'CURVE'

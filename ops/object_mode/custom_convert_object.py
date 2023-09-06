@@ -1,4 +1,5 @@
 import bpy
+import utils
 from bpy.types import Operator
 
 
@@ -22,15 +23,24 @@ class OBJECT_OT_CustomConvertObject(Operator):
         if event.ctrl:
             self.keep_original = True
         return self.execute(context)
+    
+   
 
     def execute(self, context):
-        objs = sorted(context.selected_objects[:], key=lambda obj: obj.name)
-        obj_types = {"MESH", "CURVE", "METABALL", "GPENCIL", "FONT"}
-        objs = [obj for obj in objs if obj.type in obj_types]
-        bpy.ops.object.select_all(action="DESELECT")
-        for obj in objs:
-            obj.select_set(True)
-        bpy.ops.object.convert(
-            target=self.target, keep_original=self.keep_original
-        )
+        sel_objs = context.selected_objects[:]
+        objs = set(sorted(sel_objs, key=lambda obj: obj.name))
+        gps = set([obj for obj in sel_objs if obj.type == "GPENCIL"])
+        objs = objs - gps
+        if gps:
+            bpy.ops.gpencil.convert(type="POLY")
+        else:    
+            obj_types = {"MESH", "CURVE", "METABALL",  "FONT"}
+            objs = [obj for obj in objs if obj.type in obj_types]
+
+            bpy.ops.object.select_all(action="DESELECT")
+            for obj in objs:
+                obj.select_set(True)
+            bpy.ops.object.convert(
+                target=self.target, keep_original=self.keep_original
+            )
         return {"FINISHED"}

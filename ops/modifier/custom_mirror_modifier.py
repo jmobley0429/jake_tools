@@ -42,9 +42,8 @@ class CustomAddMirrorModifier(CustomOperator, Operator):
         if self.bisect and not self.multi_object:
             self._bisect_mesh()
         if not self.bisect_only:
-            bpy.ops.object.modifier_add(type='MIRROR')
+            mirror_mod = obj.modifiers.new("Mirror", type="MIRROR")
             axis_index = self.mirror_axis
-            mirror_mod = obj.modifiers[:][-1]
             for i in range(3):
                 mirror_mod.use_axis[i] = False
                 mirror_mod.use_bisect_axis[i] = False
@@ -70,7 +69,11 @@ class CustomAddMirrorModifier(CustomOperator, Operator):
             objs = set([obj for obj in context.selected_objects if obj.data is not None])
             mirror_obj = set([context.active_object])
             objs = objs - mirror_obj
+            
             self.mirror_obj = self.get_active_obj()
+            if self.mirror_obj.type == "EMPTY":
+                mirror_obj_name = f"Mirror_Obj_{list(objs)[0].name}_{self.mirror_type}"
+                self.mirror_obj.name = mirror_obj_name
             for obj in objs:
                 context.view_layer.objects.active = obj
                 self.add_mirror_mod(obj)

@@ -37,12 +37,13 @@ class CustomDecimate(CustomOperator, Operator):
         if switch_mode:
             self.to_mode("OBJECT")
         for obj in context.selected_objects[:]:
-            mod = obj.modifiers.new(name="Decimate", type="DECIMATE")
-            mod.decimate_type = self.dec_type
-            if self.dec_type == "COLLAPSE":
-                mod.ratio = 0.2
-            if self.apply_mod:
-                bpy.ops.object.modifier_apply(modifier=mod.name)
-        if switch_mode:
-            self.to_mode(self.mode)
+            if obj.type in {"MESH",}:
+                mod = obj.modifiers.new(name="Decimate", type="DECIMATE")
+                mod.decimate_type = self.dec_type
+                if self.dec_type == "COLLAPSE":
+                    mod.ratio = 0.2
+                if self.apply_mod:
+                    bpy.ops.object.modifier_apply(modifier=mod.name)
+            if switch_mode:
+                self.to_mode(self.mode)
         return {"FINISHED"}

@@ -63,6 +63,7 @@ class PIE_MT_UVUnwrapPie(Menu):
         spl.operator("uv.textools_uv_fill")
         spl = col.split()
         spl.operator("uv.textools_island_align_edge", text="Align Edge")
+        layout.operator_context = "EXEC_DEFAULT"
         spl.operator("uv.textools_island_align_world", text="Align World")
 
 kms = [

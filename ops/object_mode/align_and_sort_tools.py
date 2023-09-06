@@ -63,8 +63,7 @@ class OBJECT_OT_sort_items_on_axis(AlignOperator, CustomModalOperator, Operator)
         ],
         default="y",
     )
-    initial_loc = Vector((0, 0, 0))
-    sort_asc = None
+    
 
     def get_obj_dim(self, obj):
         return getattr(obj.dimensions, self.axis)
@@ -174,6 +173,8 @@ class OBJECT_OT_sort_items_on_axis(AlignOperator, CustomModalOperator, Operator)
         )
 
     def invoke(self, context, event):
+        self.initial_loc = Vector((0, 0, 0))
+        self.sort_asc = None
         self.objs = self.get_objs(context)
         self.original_obj_list = self.objs.copy()
         if event.alt:

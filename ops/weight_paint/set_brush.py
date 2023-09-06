@@ -33,6 +33,8 @@ def set_brush(context, **args):
     brush_type = args.pop('brush_type')
     draw_brush_type = args.pop('draw_brush_type')
 
+    
+
     if brush_type in "gradient sample_weight".split():
         id_prefix = "builtin."
     else:
@@ -41,11 +43,25 @@ def set_brush(context, **args):
 
     bpy.ops.wm.tool_set_by_id(name=brush_id)
     if brush_type == "Draw":
-        context.tool_settings.weight_paint.brush = get_brushes()[draw_brush_type]
+        ts_modes = {
+            "PAINT_WEIGHT": "weight_paint", 
+            "PAINT_VERTEX": "vertex_paint"
+        }
+        mode_attr = ts_modes[context.mode]
+        tool_settings = getattr(context.tool_settings, mode_attr)
+        draw_brush = get_brushes()[draw_brush_type]
+        setattr(tool_settings, "brush", draw_brush)
+        # context.tool_settings.weight_paint.brush = 
+
+
+BRUSH_MODES = [
+    "PAINT_WEIGHT",
+    "PAINT_VERTEX"
+]
 
 
 class PAINT_OT_set_brush(bpy.types.Operator):
-    bl_idname = "weight_paint.set_brush"
+    bl_idname = "brush.set_brush"
     bl_label = "Set Brush"
     bl_options = {'REGISTER', 'UNDO'}
 
@@ -63,7 +79,7 @@ class PAINT_OT_set_brush(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.active_object is not None and context.mode == "PAINT_WEIGHT"
+        return context.active_object is not None and context.mode in BRUSH_MODES
 
     def execute(self, context):
         args = self.as_keywords()

@@ -6,12 +6,13 @@ from custom_operator import *
 
 
 class EdgeWeightSetter(CustomBmeshOperator):
-    clear = None
+    
 
     def __init__(self, context, args):
         self._set_args(args)
         self.bmesh(context)
         self.context = context
+        self.clear = None
 
     @property
     def sharp_angle(self):
@@ -77,15 +78,16 @@ class EdgeWeightSetter(CustomBmeshOperator):
             self.select_edges(self.context, stored_edges, select=True)
         bmesh.update_edit_mesh(self.context.edit_object.data)
 
-
-class MESH_OT_toggle_edge_weight(CustomBmeshOperator, Operator):
-    bl_idname = "mesh.toggle_edge_weight"
-    bl_label = "Set Edge Weight"
-    desc_vals = [
+desc_vals = [
         "Set edge weight on selected edges. Default toggle all selected edges to opposite value.",
         "CTRL - Clear all edges.",
         "ALT - Set all edges weight to 1",
     ]
+
+class MESH_OT_toggle_edge_weight(CustomBmeshOperator, Operator):
+    bl_idname = "mesh.toggle_edge_weight"
+    bl_label = "Set Edge Weight"
+    
     bl_description = "\n".join(desc_vals)
     bl_options = {"REGISTER", "UNDO"}
 

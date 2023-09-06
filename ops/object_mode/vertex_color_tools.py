@@ -2,12 +2,32 @@ import bpy
 from custom_operator import *
 import numpy as np
 
+def set_vertex_color(vertex_color, mesh, color_layer, ):
+    i = 0
+    for poly in mesh.polygons[:]:
+        for loop in poly.loop_indices:
+            color_layer.data[i].color = vertex_color
+            i += 1
+
+def get_masked_channels(args):
+    masked_channels = []
+    for name, value in args.items():
+        if 'channel' in name:
+            masked_channels.append(float(value))
+    masked_channels.append(1.0)
+    return np.array(masked_channels)
+
+        
+
 def generate_random_v_colors_per_obj(context, **args):
     multi_obj = args.pop("multi_obj")
     color_picker = args.pop("color_picker")
     objs = context.selected_objects[:]
+    
+
     colors = []
     margin = 0.03
+    channel_mask = get_masked_channels(args)
 
     def generate_color():
         too_close = False
@@ -32,15 +52,11 @@ def generate_random_v_colors_per_obj(context, **args):
     for obj in objs:
         if obj.type == "MESH":
             mesh = obj.data
-            vcol = mesh.vertex_colors
-            color_layer = vcol["Col"] if vcol else vcol.new()
+            vcol_layer = get_mesh_vcol_layer(mesh)
             if multi_obj:
                 color = generate_color()
-            i = 0
-            for poly in mesh.polygons[:]:
-                for loop in poly.loop_indices:
-                    color_layer.data[i].color = color
-                    i += 1
+            color *= channel_mask
+            set_vertex_color(color, mesh, vcol_layer)
 
 class OBJECT_OT_generate_random_v_colors_per_obj(bpy.types.Operator):
     bl_idname = "object.generate_random_v_colors_per_obj"
@@ -58,6 +74,19 @@ class OBJECT_OT_generate_random_v_colors_per_obj(bpy.types.Operator):
         description="If true, use color picker to assign vertex_color.",
     )
 
+    red_channel: bpy.props.BoolProperty(
+        default=True,
+        name="R",
+    )
+    green_channel: bpy.props.BoolProperty(
+        default=True,
+        name="G",
+    )
+    blue_channel: bpy.props.BoolProperty(
+        default=True,
+        name="B",
+    )
+
     @classmethod
     def poll(cls, context):
         return context.mode == "OBJECT" and context.selected_objects
@@ -68,8 +97,10 @@ class OBJECT_OT_generate_random_v_colors_per_obj(bpy.types.Operator):
         return {"FINISHED"}
     
 def get_mesh_vcol_layer(mesh):
-    vcol = mesh.vertex_colors
-    color_layer = vcol["Col"] if vcol else vcol.new()
+    try:
+       color_layer = mesh.vertex_colors["Col"]
+    except KeyError:
+       color_layer = mesh.vertex_colors.new()
     return color_layer
 
 
@@ -95,11 +126,9 @@ def copy_vcol_from_active(context):
         if obj.type == "MESH" and obj != active_obj:
             mesh = obj.data
             color_layer = get_mesh_vcol_layer(mesh)
-            i = 0
-            for poly in mesh.polygons[:]:
-                for loop in poly.loop_indices:
-                    color_layer.data[i].color = active_vcol
-                    i += 1
+            set_vertex_color(active_vcol, mesh, color_layer)
+
+
 
 
 class OBJECT_OT_CopyVcolFromActive(bpy.types.Operator):

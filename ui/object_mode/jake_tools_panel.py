@@ -41,6 +41,7 @@ def jake_tools_panel(context, layout):
         OBJECT_OT_generate_random_v_colors_per_obj.bl_idname,
         text="Set Single Color",
     )
+    op.color_picker = True
     row = col.row(align=True)
     op = row.operator(
         OBJECT_OT_CopyVcolFromActive.bl_idname, text="Copy VCol from Active"
