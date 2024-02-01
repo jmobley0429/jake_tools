@@ -24,12 +24,13 @@ classes = importer.get_classes(imported_modules)
 
 addon_keymaps = []
 
+
 def register():
     for cls in classes:
         try:
             bpy.utils.register_class(cls)
         except ValueError:
-            print(f'Class already registered: {cls}')
+            print(f"Error registering: {cls}")
     for mod in imported_modules:
         if hasattr(mod, "register"):
             mod.register()

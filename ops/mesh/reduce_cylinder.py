@@ -16,8 +16,11 @@ class MESH_OT_reduce_cylinder(CustomOperator, Operator):
         return cls.edit_obj_poll(context)
 
     def execute(self, context):
+        bpy.ops.object.mode_set(mode="OBJECT")
+        bpy.ops.object.mode_set(mode="EDIT")
         bpy.ops.mesh.edgering_select("INVOKE_DEFAULT")
         bpy.ops.mesh.select_nth()
         bpy.ops.mesh.loop_multi_select(ring=False)
         bpy.ops.mesh.dissolve_mode(use_verts=True)
+
         return {"FINISHED"}

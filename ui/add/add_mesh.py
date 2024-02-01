@@ -1,10 +1,10 @@
 import bpy
 from bpy.types import Menu
 
+
 class PIE_MT_AddMesh(Menu):
     bl_idname = "PIE_MT_AddMesh"
     bl_label = "Pie Add Mesh"
-    bl_options = {"REGISTER", "UNDO"}
 
     def draw(self, context):
         layout = self.layout
@@ -30,25 +30,38 @@ class PIE_MT_AddMesh(Menu):
         # Right -- Sphere
         col = pie.column()
         spl = col.split()
-        op = spl.operator("mesh.primitive_uv_sphere_add", text="UV - 32", icon="MESH_UVSPHERE")
+        op = spl.operator(
+            "mesh.primitive_uv_sphere_add", text="UV - 32", icon="MESH_UVSPHERE"
+        )
         op.segments = 32
         op.ring_count = 16
         op.radius = 1
-        op = spl.operator("mesh.primitive_uv_sphere_add", text="UV - 16", icon="MESH_UVSPHERE")
+        op = spl.operator(
+            "mesh.primitive_uv_sphere_add", text="UV - 16", icon="MESH_UVSPHERE"
+        )
         op.segments = 16
         op.ring_count = 8
         op.radius = 1
         spl = col.split()
-        op = spl.operator("mesh.primitive_ico_sphere_add", text="Ico - 2", icon="MESH_ICOSPHERE")
+        op = spl.operator(
+            "mesh.primitive_ico_sphere_add", text="Ico - 2", icon="MESH_ICOSPHERE"
+        )
         op.subdivisions = 2
-        op = spl.operator("mesh.primitive_ico_sphere_add", text="Ico - 1", icon="MESH_ICOSPHERE")
-        op.subdivisions = 2
+        op = spl.operator(
+            "mesh.primitive_ico_sphere_add", text="Ico - 1", icon="MESH_ICOSPHERE"
+        )
+        op.subdivisions = 1
+
         spl = col.split()
-        op = spl.operator("mesh.primitive_round_cube_add", text="Quad - 8", icon="MESH_UVSPHERE")
+        op = spl.operator(
+            "mesh.primitive_round_cube_add", text="Quad - 8", icon="MESH_UVSPHERE"
+        )
         op.arc_div = 8
         op.radius = 1
         op.div_type = "CORNERS"
-        op = spl.operator("mesh.primitive_round_cube_add", text="Quad - 4", icon="MESH_UVSPHERE")
+        op = spl.operator(
+            "mesh.primitive_round_cube_add", text="Quad - 4", icon="MESH_UVSPHERE"
+        )
         op.arc_div = 4
         op.radius = 1
         op.div_type = "CORNERS"
@@ -110,9 +123,13 @@ class PIE_MT_AddMesh(Menu):
 
         box = pie.split().column()
         spl = box.split()
-        op = spl.operator("mesh.primitive_plane_add", text="Plane 1m", icon="MESH_PLANE")
+        op = spl.operator(
+            "mesh.primitive_plane_add", text="Plane 1m", icon="MESH_PLANE"
+        )
         op.size = 1
-        op = spl.operator("mesh.primitive_plane_add", text="Plane .5m", icon="MESH_PLANE")
+        op = spl.operator(
+            "mesh.primitive_plane_add", text="Plane .5m", icon="MESH_PLANE"
+        )
         op.size = 0.5
         spl = box.split()
         op = spl.operator("mesh.primitive_grid_add", text="Grid 25", icon="MESH_GRID")
@@ -124,7 +141,9 @@ class PIE_MT_AddMesh(Menu):
         op.radius = 0.0
         op.lin_div = 5
         op.div_type = "ALL"
-        op = spl.operator("mesh.primitive_vert_add", text="Single Vert", icon="DECORATE")
+        op = spl.operator(
+            "mesh.primitive_vert_add", text="Single Vert", icon="DECORATE"
+        )
 
         # Planes
         # empty / other
@@ -166,14 +185,24 @@ class PIE_MT_AddMesh(Menu):
         box.ui_units_y += 2
         op = box.operator("mesh.primitive_torus_add", text="Torus", icon="MESH_TORUS")
         op = box.operator("mesh.primitive_cone_add", text="Cone", icon="MESH_CONE")
-        op = box.operator("mesh.primitive_monkey_add", text="Monkey", icon="MESH_MONKEY")
+        op = box.operator(
+            "mesh.primitive_monkey_add", text="Monkey", icon="MESH_MONKEY"
+        )
 
         # Curves
         box = pie.split().column()
         box.ui_units_y += 2
-        op = box.operator("curve.primitive_bezier_curve_add", text="Bezier Curve", icon="IPO_BEZIER")
-        op = box.operator("curve.primitive_nurbs_path_add", text="Path", icon="CURVE_PATH")
-        op = box.operator("curve.primitive_bezier_circle_add", text="Curve Circle", icon="CURVE_NCIRCLE")
+        op = box.operator(
+            "curve.primitive_bezier_curve_add", text="Bezier Curve", icon="IPO_BEZIER"
+        )
+        op = box.operator(
+            "curve.primitive_nurbs_path_add", text="Path", icon="CURVE_PATH"
+        )
+        op = box.operator(
+            "curve.primitive_bezier_circle_add",
+            text="Curve Circle",
+            icon="CURVE_NCIRCLE",
+        )
 
 
 kms = [

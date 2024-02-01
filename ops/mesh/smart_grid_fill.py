@@ -45,6 +45,8 @@ def smart_grid_fill(context, args):
     if sel_faces:
         if len(sel_faces) > 1:
             ret = bmesh.ops.dissolve_faces(bm, faces=sel_faces)
+            print(bm)
+            print(ret)
             face = ret["region"][0]
         else:
             face = sel_faces[0]

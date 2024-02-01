@@ -1,4 +1,4 @@
-#modifier
+# modifier
 
 import bpy
 import numpy as np
@@ -7,23 +7,22 @@ from custom_operator import *
 
 
 class BevelModifier(CustomOperator):
-
-    bl_options = {'REGISTER', "UNDO"}
+    bl_options = {"REGISTER", "UNDO"}
 
     limit_method: bpy.props.EnumProperty(
         items=(
-            ('WEIGHT', "Weight", "Weight"),
-            ('ANGLE', "Angle", "Weight"),
+            ("WEIGHT", "Weight", "Weight"),
+            ("ANGLE", "Angle", "Weight"),
         ),
-        name='Weight',
-        description='Weighted Limit Method',
+        name="Weight",
+        description="Weighted Limit Method",
         default="ANGLE",
     )
 
     def _next_limit_method(self, event):
         methods = [
-            'WEIGHT',
-            'ANGLE',
+            "WEIGHT",
+            "ANGLE",
         ]
         addend = 1
         if event.shift:
@@ -43,8 +42,8 @@ class BevelModifier(CustomOperator):
             bpy.ops.object.mode_set(mode="OBJECT")
         obj = self.get_active_obj()
         bpy.ops.object.shade_smooth()
-        obj.data.use_auto_smooth = True
-        bpy.ops.object.modifier_add(type='BEVEL')
+        # obj.data.use_auto_smooth = True
+        bpy.ops.object.modifier_add(type="BEVEL")
         bevel_mod = obj.modifiers[:][-1]
         bevel_mod.limit_method = self.limit_method
         bevel_mod.segments = 2
@@ -66,7 +65,9 @@ class CustomAddBevelModifier(BevelModifier, CustomModalOperator, Operator):
     bl_label = "Add Custom Bevel"
     bl_parent_id = "CustomOperator"
     bl_options = {"REGISTER", "UNDO"}
-    bl_description = "Add Bevel modifier, Angle is default limit method, Hold ALT for Weighted."
+    bl_description = (
+        "Add Bevel modifier, Angle is default limit method, Hold ALT for Weighted."
+    )
 
     @property
     def modal_info_string(self):
@@ -89,13 +90,11 @@ class CustomAddBevelModifier(BevelModifier, CustomModalOperator, Operator):
         return {"RUNNING_MODAL"}
 
     def modal(self, context, event):
-
         self.display_modal_info(self.modal_info_string, context)
         self.multiplier = 0.001
         if event.shift:
             self.multiplier = 0.0001
         if event.type == "MOUSEMOVE":
-
             delta = (self.init_mouse_x - event.mouse_x) * self.multiplier
             self.bevel_mod.width -= delta
             self.init_mouse_x = event.mouse_x
@@ -119,7 +118,8 @@ class CustomAddBevelModifier(BevelModifier, CustomModalOperator, Operator):
         elif event.type == "LEFTMOUSE":
             return self.exit_modal(context)
         return {"RUNNING_MODAL"}
-    
+
+
 class CustomAddQuickBevSubSurfModifier(BevelModifier, Operator):
     """Add Custom Bevel Modifier with Subsurf"""
 
@@ -134,11 +134,11 @@ class CustomAddQuickBevSubSurfModifier(BevelModifier, Operator):
         if in_edit:
             bpy.ops.object.mode_set(mode="OBJECT")
         self._add_bevel_modifier(profile=1.0)
-        
-        bpy.ops.object.modifier_add(type='SUBSURF')
-        bpy.ops.object.modifier_add(type='WEIGHTED_NORMAL')
+
+        bpy.ops.object.modifier_add(type="SUBSURF")
+        bpy.ops.object.modifier_add(type="WEIGHTED_NORMAL")
         bpy.ops.object.shade_smooth()
-        obj.data.use_auto_smooth = True
+        # obj.data.use_auto_smooth = True
         self.close_modifiers()
         if in_edit:
             bpy.ops.object.mode_set(mode="EDIT")

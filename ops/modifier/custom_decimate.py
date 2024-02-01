@@ -13,7 +13,9 @@ class CustomDecimate(CustomOperator, Operator):
 
     bl_idname = "object.custom_decimate"
     bl_label = "Add Custom Decimate"
-    bl_description = "ALT > Add modifier and apply immediately, CTRL > Add planar modifier."
+    bl_description = (
+        "ALT > Add modifier and apply immediately, CTRL > Add planar modifier."
+    )
 
     apply_mod = False
     dec_type = "COLLAPSE"
@@ -37,11 +39,16 @@ class CustomDecimate(CustomOperator, Operator):
         if switch_mode:
             self.to_mode("OBJECT")
         for obj in context.selected_objects[:]:
-            if obj.type in {"MESH",}:
-                mod = obj.modifiers.new(name="Decimate", type="DECIMATE")
+            if obj.type in {
+                "MESH",
+            }:
+                mod = obj.modifiers.new(
+                    name=f"{self.dec_type.capitalize()}", type="DECIMATE"
+                )
                 mod.decimate_type = self.dec_type
                 if self.dec_type == "COLLAPSE":
                     mod.ratio = 0.2
+
                 if self.apply_mod:
                     bpy.ops.object.modifier_apply(modifier=mod.name)
             if switch_mode:

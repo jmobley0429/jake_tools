@@ -1,13 +1,10 @@
-#modifier
+# modifier
 import bpy
 from bpy.types import Operator
 from custom_operator import *
 
 
-good_obj_types = [
-    'OBJECT',
-    'CURVE'
-]
+good_obj_types = ["OBJECT", "CURVE"]
 
 
 class CustomAddMirrorModifier(CustomOperator, Operator):
@@ -26,8 +23,6 @@ class CustomAddMirrorModifier(CustomOperator, Operator):
     bisect: bpy.props.BoolProperty(default=True)
     bisect_only: bpy.props.BoolProperty(default=False)
 
-    
-
     def invoke(self, context, event):
         self.multi_object = False
         self.bisect_only = False
@@ -39,26 +34,29 @@ class CustomAddMirrorModifier(CustomOperator, Operator):
         return self.execute(context)
 
     def add_mirror_mod(self, obj):
-        if self.bisect and not self.multi_object:
-            self._bisect_mesh()
-        if not self.bisect_only:
-            mirror_mod = obj.modifiers.new("Mirror", type="MIRROR")
-            axis_index = self.mirror_axis
-            for i in range(3):
-                mirror_mod.use_axis[i] = False
-                mirror_mod.use_bisect_axis[i] = False
-            mirror_mod.use_axis[axis_index] = True
-            mirror_mod.use_bisect_axis[axis_index] = True
-            # mirror_mod.use_mirror_u = True
-            mirror_mod.use_clip = True
-            if self.multi_object:
-                mirror_mod.mirror_object = self.mirror_obj
-            if self.mirror_type not in {
-                "Z_POS",
-                "X_POS",
-                "Y_POS",
-            }:
-                mirror_mod.use_bisect_flip_axis[axis_index] = True
+        if obj.type in ["MESH", "CURVE"]:
+            if obj.type == "MESH":
+                if self.bisect and not self.multi_object:
+                    self._bisect_mesh()
+
+            if not self.bisect_only:
+                mirror_mod = obj.modifiers.new("Mirror", type="MIRROR")
+                axis_index = self.mirror_axis
+                for i in range(3):
+                    mirror_mod.use_axis[i] = False
+                    mirror_mod.use_bisect_axis[i] = False
+                mirror_mod.use_axis[axis_index] = True
+                mirror_mod.use_bisect_axis[axis_index] = True
+                # mirror_mod.use_mirror_u = True
+                mirror_mod.use_clip = True
+                if self.multi_object:
+                    mirror_mod.mirror_object = self.mirror_obj
+                if self.mirror_type not in {
+                    "Z_POS",
+                    "X_POS",
+                    "Y_POS",
+                }:
+                    mirror_mod.use_bisect_flip_axis[axis_index] = True
 
     def execute(self, context):
         in_edit_mode = bool(bpy.context.object.mode == "EDIT")
@@ -66,10 +64,12 @@ class CustomAddMirrorModifier(CustomOperator, Operator):
             bpy.ops.object.mode_set(mode="OBJECT")
         if len(context.selected_objects) > 1:
             self.multi_object = True
-            objs = set([obj for obj in context.selected_objects if obj.data is not None])
+            objs = set(
+                [obj for obj in context.selected_objects if obj.data is not None]
+            )
             mirror_obj = set([context.active_object])
             objs = objs - mirror_obj
-            
+
             self.mirror_obj = self.get_active_obj()
             if self.mirror_obj.type == "EMPTY":
                 mirror_obj_name = f"Mirror_Obj_{list(objs)[0].name}_{self.mirror_type}"
@@ -82,7 +82,7 @@ class CustomAddMirrorModifier(CustomOperator, Operator):
             self.add_mirror_mod(obj)
         if in_edit_mode:
             bpy.ops.object.mode_set(mode="EDIT")
-        return {'FINISHED'}
+        return {"FINISHED"}
 
     def _bisect_mesh(self):
         C = bpy.context
@@ -124,35 +124,35 @@ class CustomAddMirrorModifier(CustomOperator, Operator):
     def bisect_args(self):
         if self.mirror_type:
             vals = {
-                'X_NEG': {
-                    'plane_no': (1, 0, 0),
-                    'clear_inner': False,
-                    'clear_outer': True,
+                "X_NEG": {
+                    "plane_no": (1, 0, 0),
+                    "clear_inner": False,
+                    "clear_outer": True,
                 },
-                'Y_NEG': {
-                    'plane_no': (0, 1, 0),
-                    'clear_inner': False,
-                    'clear_outer': True,
+                "Y_NEG": {
+                    "plane_no": (0, 1, 0),
+                    "clear_inner": False,
+                    "clear_outer": True,
                 },
-                'Z_NEG': {
-                    'plane_no': (0, 0, 1),
-                    'clear_inner': False,
-                    'clear_outer': True,
+                "Z_NEG": {
+                    "plane_no": (0, 0, 1),
+                    "clear_inner": False,
+                    "clear_outer": True,
                 },
-                'X_POS': {
-                    'plane_no': (1, 0, 0),
-                    'clear_inner': True,
-                    'clear_outer': False,
+                "X_POS": {
+                    "plane_no": (1, 0, 0),
+                    "clear_inner": True,
+                    "clear_outer": False,
                 },
-                'Y_POS': {
-                    'plane_no': (0, 1, 0),
-                    'clear_inner': True,
-                    'clear_outer': False,
+                "Y_POS": {
+                    "plane_no": (0, 1, 0),
+                    "clear_inner": True,
+                    "clear_outer": False,
                 },
-                'Z_POS': {
-                    'plane_no': (0, 0, 1),
-                    'clear_inner': True,
-                    'clear_outer': False,
+                "Z_POS": {
+                    "plane_no": (0, 0, 1),
+                    "clear_inner": True,
+                    "clear_outer": False,
                 },
             }
 

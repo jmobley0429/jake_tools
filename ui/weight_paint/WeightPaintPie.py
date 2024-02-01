@@ -1,9 +1,9 @@
 from bpy.types import Menu
 
+
 class PIE_MT_PaintBrushPie(Menu):
     bl_idname = "PIE_MT_PaintBrushPie"
     bl_label = "Switch Paint Brush Pie"
-    bl_options = {'REGISTER', 'UNDO'}
 
     def draw(self, context):
         layout = self.layout
@@ -46,8 +46,9 @@ class PIE_MT_PaintBrushPie(Menu):
         op = pie.operator("brush.set_brush", text="Blur")
         op.brush_type = "Blur"
 
+
 kms = [
-     {
+    {
         "keymap_operator": "wm.call_menu_pie",
         "name": "Weight Paint",
         "letter": "W",
@@ -58,7 +59,7 @@ kms = [
         "region_type": "WINDOW",
         "keywords": {"name": "PIE_MT_PaintBrushPie"},
     },
-     {
+    {
         "keymap_operator": "wm.call_menu_pie",
         "name": "Vertex Paint",
         "letter": "W",

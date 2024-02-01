@@ -101,13 +101,28 @@ class PIE_MT_sort_objects(Menu):
         op.align_to = "POS"
 
 
+# kms = [
+#     {
+#         "keymap_operator": "wm.call_menu_pie",
+#         "name": "Object Mode",
+#         "letter": "X",
+#         "shift": 0,
+#         "ctrl": 0,
+#         "alt": 1,
+#         "space_type": "VIEW_3D",
+#         "region_type": "WINDOW",
+#         "keywords": {"name": PIE_MT_sort_objects.bl_idname},
+#     }
+# ]
+
+
 kms = [
     {
         "keymap_operator": "wm.call_menu_pie",
         "name": "Object Mode",
         "letter": "X",
         "shift": 0,
-        "ctrl": 1,
+        "ctrl": 0,
         "alt": 1,
         "space_type": "VIEW_3D",
         "region_type": "WINDOW",

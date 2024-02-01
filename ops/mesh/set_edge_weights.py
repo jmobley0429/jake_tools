@@ -1,18 +1,22 @@
 # edit_mode
 import bpy
+import bmesh
 import numpy as np
 from bpy.types import Operator
 from custom_operator import *
 
 
 class EdgeWeightSetter(CustomBmeshOperator):
-    
-
     def __init__(self, context, args):
+        self.obj = context.edit_object
+        self.mesh = context.edit_object.data
         self._set_args(args)
-        self.bmesh(context)
+        self.bm = bmesh.from_edit_mesh(self.mesh)
         self.context = context
         self.clear = None
+
+    def update_mesh(self):
+        bmesh.update_edit_mesh(self.mesh)
 
     @property
     def sharp_angle(self):
@@ -29,10 +33,14 @@ class EdgeWeightSetter(CustomBmeshOperator):
             self.clear = False
 
     def verify_weight_layer(self):
-        if self.weight_type == "BEVEL":
-            self.weight_layer = self.bm.edges.layers.bevel_weight.verify()
-        elif self.weight_type == "CREASE":
-            self.weight_layer = self.bm.edges.layers.crease.verify()
+        layer_names = {
+            "BEVEL": "bevel_weight_edge",
+            "CREASE": "crease_edge",
+        }
+        layer_name = layer_names[self.weight_type]
+        if layer_name not in self.mesh.attributes:
+            self.mesh.attributes.new(layer_name, "FLOAT", "EDGE")
+        self.weight_layer = self.bm.edges.layers.float.get(layer_name)
 
     def set_edge_weight(self, edge):
         if self.clear is not None:
@@ -42,12 +50,16 @@ class EdgeWeightSetter(CustomBmeshOperator):
         edge[self.weight_layer] = float(val)
 
     def set_edges_weight(self):
+        self.verify_weight_layer()
+        print(self.weight_layer)
         for edge in self.sel_edges:
-            try:
-                self.set_edge_weight(edge)
-            except ReferenceError:
-                self.bmesh(self.context)
-                self.set_edges_weight(self)
+            self.set_edge_weight(edge)
+            # try:
+            #     self.set_edge_weight(edge)
+            # except ReferenceError:
+            #     self.bmesh(self.context)
+            #     self.set_edges_weight(self)
+        self.update_mesh()
 
     def set_sharp_to_weighted(self):
         obj = self.get_active_obj()
@@ -72,22 +84,24 @@ class EdgeWeightSetter(CustomBmeshOperator):
         )
         self.verify_weight_layer()
         self.set_edges_weight()
-        self.bmesh(self.context)
-        if stored_edges:
-            self.select_edges(self.context, self.bm.edges[:], select=False)
-            self.select_edges(self.context, stored_edges, select=True)
-        bmesh.update_edit_mesh(self.context.edit_object.data)
+        # # self.bmesh(self.context)
+        # if stored_edges:
+        #     self.select_edges(self.context, self.bm.edges[:], select=False)
+        #     self.select_edges(self.context, stored_edges, select=True)
+        self.update_mesh()
+
 
 desc_vals = [
-        "Set edge weight on selected edges. Default toggle all selected edges to opposite value.",
-        "CTRL - Clear all edges.",
-        "ALT - Set all edges weight to 1",
-    ]
+    "Set edge weight on selected edges. Default toggle all selected edges to opposite value.",
+    "CTRL - Clear all edges.",
+    "ALT - Set all edges weight to 1",
+]
+
 
 class MESH_OT_toggle_edge_weight(CustomBmeshOperator, Operator):
     bl_idname = "mesh.toggle_edge_weight"
     bl_label = "Set Edge Weight"
-    
+
     bl_description = "\n".join(desc_vals)
     bl_options = {"REGISTER", "UNDO"}
 
@@ -105,9 +119,8 @@ class MESH_OT_toggle_edge_weight(CustomBmeshOperator, Operator):
 
     def execute(self, context):
         ews = self.edge_weight_setter
-        ews.verify_weight_layer()
         ews.set_edges_weight()
-        bmesh.update_edit_mesh(context.edit_object.data)
+
         return {"FINISHED"}
 
 

@@ -3,7 +3,7 @@ import utils
 from custom_operator import *
 
 
-def move_bool_objects():
+def move_bool_objects(context):
     bool_coll = utils.get_or_create_collection("bools")
     bool_objs = bool_coll.objects[:]
     for obj in bpy.data.objects[:]:
@@ -15,7 +15,12 @@ def move_bool_objects():
                         coll = bool_obj.users_collection[0]
                         coll.objects.unlink(bool_obj)
                         bool_coll.objects.link(bool_obj)
-
+                        if not bool_obj.constraints:
+                            const = bool_obj.constraints.new("CHILD_OF")
+                            const.target = obj
+    scene_coll = context.scene.collection
+    if bool_coll not in scene_coll.children_recursive:
+        scene_coll.children.link(bool_coll)
 
 
 class OBJECT_OT_move_bool_objs_to_coll(bpy.types.Operator):
@@ -25,8 +30,8 @@ class OBJECT_OT_move_bool_objs_to_coll(bpy.types.Operator):
 
     @classmethod
     def poll(cls, context):
-        return context.mode == "OBJECT" 
-    
+        return context.mode == "OBJECT"
+
     def execute(self, context):
-        move_bool_objects()
+        move_bool_objects(context)
         return {"FINISHED"}

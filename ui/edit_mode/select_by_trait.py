@@ -11,7 +11,6 @@ from jake_tools.ops.mesh.cleanup_mesh import (
 class MESH_MT_PIE_select_by_trait(Menu):
     bl_label = "Select by Trait"
     bl_idname = "MESH_MT_PIE_select_by_trait"
-    bl_options = {"REGISTER", "UNDO"}
 
     def draw(self, context):
         layout = self.layout
@@ -24,6 +23,7 @@ class MESH_MT_PIE_select_by_trait(Menu):
         pie.operator(MESH_OT_cleanup_select_short_edges.bl_idname)
         pie.operator(MESH_OT_cleanup_select_small_faces.bl_idname)
         pie.operator(MESH_OT_cleanup_handle_ngons.bl_idname)
+
 
 kms = [
     {

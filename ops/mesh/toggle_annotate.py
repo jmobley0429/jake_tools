@@ -37,6 +37,7 @@ class VIEW3D_OT_toggle_annotate(Operator):
 
 
 def register():
+    print("REGISTERING: **********************\n" * 5)
     bpy.types.WindowManager.ToggleAnnotateProps = bpy.props.PointerProperty(
         type=ToggleAnnotateProps
     )

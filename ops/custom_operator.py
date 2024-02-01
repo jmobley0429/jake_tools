@@ -41,7 +41,6 @@ class CustomOperator:
         if context.active_object.type != "MESH":
             return False
         return True
-      
 
     def to_mode(self, mode):
         bpy.ops.object.mode_set(mode=mode)
@@ -82,7 +81,7 @@ class CustomModalOperator(CustomOperator):
     mod_name: bpy.props.StringProperty()
     initial_mouse: bpy.props.IntProperty()
 
-    wheel_input = {'WHEELUPMOUSE', 'WHEELDOWNMOUSE'}
+    wheel_input = {"WHEELUPMOUSE", "WHEELDOWNMOUSE"}
 
     numpad_input = {
         "NUMPAD_2",
@@ -110,8 +109,8 @@ class CustomModalOperator(CustomOperator):
         context.area.header_text_set(None)
         self.close_modifiers()
         if cancelled:
-            return {'CANCELLED'}
-        return {'FINISHED'}
+            return {"CANCELLED"}
+        return {"FINISHED"}
 
     def set_numpad_input(self, event):
         if event.type == "BACKSPACE":
@@ -121,7 +120,7 @@ class CustomModalOperator(CustomOperator):
 
     @property
     def string_numpad_value(self):
-        return ''.join(self.numpad_value)
+        return "".join(self.numpad_value)
 
     @property
     def float_numpad_value(self):
@@ -132,12 +131,12 @@ class CustomModalOperator(CustomOperator):
         return int(self.string_numpad_value)
 
     def display_modal_info(self, msg, context):
-        '''Takes a string of info for the
-        modal and displays it in the UI Header'''
+        """Takes a string of info for the
+        modal and displays it in the UI Header"""
         if self.numpad_value:
             inp_msg = f", Input : {self.string_numpad_value}"
         else:
-            inp_msg = ''
+            inp_msg = ""
         context.area.header_text_set(msg + inp_msg)
 
     def _clear_info(self, context):
@@ -145,7 +144,6 @@ class CustomModalOperator(CustomOperator):
 
 
 class CustomBmeshOperator(CustomOperator):
-    
     @classmethod
     def bmesh(cls, context):
         bpy.ops.object.mode_set(mode="OBJECT")
@@ -168,7 +166,7 @@ class CustomBmeshOperator(CustomOperator):
                 elem.select_set(False)
             else:
                 elem.select_set(True)
-    
+
     def cleanup_bmesh(self):
         self.bm.free()
 
@@ -208,23 +206,23 @@ class CustomBmeshOperator(CustomOperator):
     def select_edges(self, context, edges, select=True, skip_callback_func=None):
         for edge in edges:
             edge.select_set(True)
-        # try:
-        #     for edge in edges:
-        #         edge.select = select
-        #         if skip_callback_func is not None:
-        #             if skip_callback_func(edge):
-        #                 edge.select = not select
+        try:
+            for edge in edges:
+                edge.select = select
+                if skip_callback_func is not None:
+                    if skip_callback_func(edge):
+                        edge.select = not select
 
-        # except ReferenceError:
-        #     self.bmesh(context)
-        #     self.select_edges(context, edges, select=select)
+        except ReferenceError:
+            self.bmesh(context)
+            self.select_edges(context, edges, select=select)
 
 
 class ModalDrawText:
     def __init__(self, context, msg):
         self.msg = msg
         self.handle = bpy.types.SpaceView3D.draw_handler_add(
-            self.draw_text_callback, (context,), 'WINDOW', 'POST_PIXEL'
+            self.draw_text_callback, (context,), "WINDOW", "POST_PIXEL"
         )
 
     def draw_text_callback(self, context):
@@ -235,11 +233,10 @@ class ModalDrawText:
         blf.draw(font_id, "%s" % (self.msg))
 
     def remove_handle(self):
-        bpy.types.SpaceView3D.draw_handler_remove(self.handle, 'WINDOW')
+        bpy.types.SpaceView3D.draw_handler_remove(self.handle, "WINDOW")
 
 
 class OperatorBaseClass(CustomOperator):
-    
     def __init__(self, context, args=None, op=None):
         self.context = context
         if args is not None:
@@ -251,11 +248,7 @@ class OperatorBaseClass(CustomOperator):
     def _active_obj(self):
         return self.context.view_layer.objects.active
 
-class EditModeOperatorBaseClass(OperatorBaseClass, CustomBmeshOperator):
 
+class EditModeOperatorBaseClass(OperatorBaseClass, CustomBmeshOperator):
     def __init__(self, context, args=None, op=None):
         super().__init__(context, args, op=op)
-
-    
-
-

@@ -3,19 +3,20 @@ from bpy.types import Operator
 from custom_operator import *
 import numpy as np
 
-class SSObject:
 
+class SSObject:
     def __init__(self, obj):
         self.obj = obj
         self.mesh = obj.data
-    
+
     @property
     def is_auto_smoothed(self):
-        return self.mesh.use_auto_smooth
-    
+        return True
+        # return self.mesh.use_auto_smooth
+
     def _set_active(self, context):
         context.view_layer.objects.active = self.obj
-    
+
     def set_ss_angle(self, angle):
         self.mesh.auto_smooth_angle = angle
 
@@ -29,17 +30,11 @@ class SSObject:
     def set_smooth_shaded(self, angle):
         print(f"Setting active obj: {self.obj.name}")
         bpy.ops.mesh.customdata_custom_splitnormals_clear()
-        self.mesh.use_auto_smooth = True
+        # self.mesh.use_auto_smooth = True
         self.mesh.auto_smooth_angle = angle
 
-    
-  
-
-    
-    
 
 class SmoothShader(OperatorBaseClass):
-
     def __init__(self, context, args, op):
         super().__init__(context, args, op)
         self.selected_objects = context.selected_objects[:]
@@ -63,31 +58,28 @@ class SmoothShader(OperatorBaseClass):
 
         return ", ".join(msg)
 
-    
     def toggle_custom_normals(self, clear=False):
         for obj in self.ss_objs:
             obj.add_custom_normals(self.context, clear=clear)
-            
 
     def set_objs_to_smooth_shaded(self):
         for obj in self.ss_objs:
             obj._set_active(self.context)
             obj.set_smooth_shaded(self.current_angle)
-        print("is auto_smoothed: ", obj.mesh.use_auto_smooth)
-        print("AS angle: ", obj.mesh.auto_smooth_angle)
+        # print("is auto_smoothed: ", obj.mesh.use_auto_smooth)
+        # print("AS angle: ", obj.mesh.auto_smooth_angle)
 
     def set_objs_to_flat_shaded(self):
         for obj in self.ss_objs:
             obj.set_flat_shaded(self.context)
 
-    
     def toggle_shading(self, obj):
         if not self.is_smooth_shaded:
             self.set_objs_to_smooth_shaded()
-            
+
         else:
             self.set_objs_to_flat_shaded()
-    
+
     def set_new_angle_val(self, raw_angle, divisor=5):
         if divisor == 5:
             raw_angle = round(raw_angle / divisor) * divisor
@@ -96,13 +88,11 @@ class SmoothShader(OperatorBaseClass):
         print(self._current_angle_rads)
         for obj in self.ss_objs:
             obj.set_ss_angle(self._current_angle_rads)
-    
-    @property 
+
+    @property
     def _current_angle_rads(self):
         return np.radians(self.current_angle)
-    
-        
-    
+
     def change_smoothing_angle(self, event, set_angle=False):
         if set_angle:
             self.set_new_angle_val(self.current_angle, divisor=1)
@@ -116,7 +106,6 @@ class SmoothShader(OperatorBaseClass):
         raw_angle = self.current_angle + addend
         self.set_new_angle_val(raw_angle, divisor=divisor)
 
-  
 
 class OBJECT_OT_set_auto_smooth_modal(CustomModalOperator, Operator):
     bl_idname = "object.auto_smooth_modal"
@@ -132,11 +121,15 @@ class OBJECT_OT_set_auto_smooth_modal(CustomModalOperator, Operator):
         self.overlays_on = context.space_data.overlay.show_overlays
         if self.in_edit:
             self.to_mode("OBJECT")
-        bpy.ops.object.shade_smooth(use_auto_smooth=True)
+        # bpy.ops.object.shade_smooth(use_auto_smooth=True)
         if self.overlays_on:
             context.space_data.overlay.show_overlays = False
-        
-        self.shader = SmoothShader(context, self.as_keywords(), self, )
+
+        self.shader = SmoothShader(
+            context,
+            self.as_keywords(),
+            self,
+        )
         # self.shader.set_objs_to_smooth_shaded()
         context.window_manager.modal_handler_add(self)
         print("running")
@@ -174,6 +167,7 @@ class OBJECT_OT_set_auto_smooth_modal(CustomModalOperator, Operator):
 
         self.display_modal_info(shader.modal_info_string, context)
         return {"RUNNING_MODAL"}
+
 
 kms = [
     {

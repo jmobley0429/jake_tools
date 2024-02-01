@@ -1,12 +1,10 @@
 import bpy
 from bpy.types import Menu
 
+
 class MESH_MT_PIE_loop_tools(Menu):
     bl_label = "Loop Tools"
     bl_idname = "MESH_MT_PIE_loop_tools"
-    bl_options = {"REGISTER", "UNDO"}
-
-    
 
     def draw(self, context):
         layout = self.layout
@@ -19,6 +17,9 @@ class MESH_MT_PIE_loop_tools(Menu):
         op = pie.operator("mesh.custom_gstretch")
         op = pie.operator("mesh.looptools_relax")
         op = pie.operator("mesh.looptools_space")
+        op = pie.operator("mesh.vertices_smooth")
+        op.factor = 0.5
+
 
 kms = [
     {

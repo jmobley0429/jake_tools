@@ -1,9 +1,9 @@
 from bpy.types import Menu
 
+
 class MESH_MT_PIE_cleanup(Menu):
     bl_label = "Clean Up Pie"
     bl_idname = "MESH_MT_PIE_cleanup"
-    bl_options = {"REGISTER", "UNDO"}
 
     def draw(self, context):
         layout = self.layout
@@ -15,6 +15,7 @@ class MESH_MT_PIE_cleanup(Menu):
         op = pie.operator("mesh.face_make_planar")
         op = pie.operator("mesh.vert_connect_nonplanar")
         op = pie.operator("mesh.vert_connect_concave")
+
 
 kms = [
     {

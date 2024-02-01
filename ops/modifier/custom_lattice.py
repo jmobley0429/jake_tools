@@ -1,4 +1,4 @@
-#modifier
+# modifier
 
 import bpy
 import numpy as np
@@ -6,6 +6,7 @@ from bpy.types import Operator
 from custom_operator import *
 from mathutils import Vector
 import utils
+
 
 def add_lattice_object(context, location=None):
     lat_data = bpy.data.lattices.new("Lattice")
@@ -16,9 +17,10 @@ def add_lattice_object(context, location=None):
     lat_obj.location = location
     return lat_obj
 
+
 def add_lattice_mod_to_obj(obj, lattice, generate_lat=True):
     if obj.type in {"MESH", "CURVE"}:
-        lat_mod = obj.modifiers.new('Lattice', type="LATTICE")
+        lat_mod = obj.modifiers.new("Lattice", type="LATTICE")
         lat_mod.object = lattice
         if generate_lat:
             dims = obj.dimensions
@@ -46,15 +48,32 @@ class CustomLattice(CustomModalOperator, Operator):
     bl_idname = "object.custom_lattice"
     bl_label = "Add Smart Lattice"
     bl_options = {"REGISTER", "UNDO"}
-    current_axis = "u"
-    axes_dict = dict(zip(list('xyz'), list('uvw')))
-
 
     @property
     def current_lattice_axis_val(self):
         return getattr(self.lattice.data, f"points_{self.current_axis}")
 
+    def cycle_interp_types(self):
+        curr_type = self.interpolation_type
+        num_types = len(self.interpolation_types)
+        curr_index = self.interpolation_types.index(curr_type)
+        new_index = (curr_index + 1) % num_types
+        self.interpolation_type = self.interpolation_types[new_index]
+        for ax in list("uvw"):
+            attrib_str = f"interpolation_type_{ax}"
+            setattr(self.lattice.data, attrib_str, self.interpolation_type)
+
     def invoke(self, context, event):
+        self.interpolation_types = [
+            "KEY_CARDINAL",
+            "KEY_BSPLINE",
+            "KEY_LINEAR",
+            "KEY_CATMULL_ROM",
+        ]
+
+        self.current_axis = "u"
+        self.axes_dict = dict(zip(list("xyz"), list("uvw")))
+        self.interpolation_type = self.interpolation_types[0]
         active_obj = context.view_layer.objects.active
         generate_lat = active_obj.type != "LATTICE"
         if generate_lat:
@@ -70,31 +89,35 @@ class CustomLattice(CustomModalOperator, Operator):
                     add_lattice_mod_to_obj(obj, self.lattice, generate_lat=generate_lat)
         context.window_manager.modal_handler_add(self)
         return {"RUNNING_MODAL"}
-        
+
     @property
     def get_info_msg(self):
         lines = [f"CURRENT AXIS: {self.current_axis.upper()}"]
         for ax in list("uvw"):
             letter = ax.upper()
-            val = getattr(self.lattice.data, f'points_{ax}')
+            val = getattr(self.lattice.data, f"points_{ax}")
             lines.append(f"{letter}: {val}")
-        return ', '.join(lines)
 
+        lines.append(f"INTERPOLATION TYPE (I): {self.interpolation_type}")
+        return ", ".join(lines)
 
     def modal(self, context, event):
         e = event
         et = e.type
         self.display_modal_info(self.get_info_msg, context)
-        if et in list('UVW'):
+        if et in list("UVW"):
             self.current_axis = et.lower()
-        elif et in list('XYZ'):
+        elif et in list("XYZ"):
             self.current_axis = self.axes_dict[et.lower()]
         elif et in {"WHEELUPMOUSE", "WHEELDOWNMOUSE"}:
             curr_val = self.current_lattice_axis_val
             if "DOWN" in et:
-                setattr(self.lattice.data, f'points_{self.current_axis}', curr_val - 1)
+                setattr(self.lattice.data, f"points_{self.current_axis}", curr_val - 1)
             else:
-                setattr(self.lattice.data, f'points_{self.current_axis}', curr_val + 1)
+                setattr(self.lattice.data, f"points_{self.current_axis}", curr_val + 1)
+        elif et == "I" and e.value == "PRESS":
+            self.cycle_interp_types()
+
         elif event.type == "LEFTMOUSE":
             self._clear_info(context)
             return {"FINISHED"}
@@ -103,4 +126,4 @@ class CustomLattice(CustomModalOperator, Operator):
             remove_lattices(context, self.lattice)
             bpy.data.objects.remove(self.lattice)
             return {"CANCELLED"}
-        return {'RUNNING_MODAL'}
+        return {"RUNNING_MODAL"}

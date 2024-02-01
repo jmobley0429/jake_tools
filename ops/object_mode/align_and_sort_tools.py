@@ -63,7 +63,6 @@ class OBJECT_OT_sort_items_on_axis(AlignOperator, CustomModalOperator, Operator)
         ],
         default="y",
     )
-    
 
     def get_obj_dim(self, obj):
         return getattr(obj.dimensions, self.axis)
@@ -266,27 +265,27 @@ class OBJECT_OT_align_objects(AlignOperator, Operator):
         return {"FINISHED"}
 
 
-kms = [
-    {
-        "keymap_operator": OBJECT_OT_align_objects.bl_idname,
-        "name": "Object Mode",
-        "letter": "X",
-        "shift": 0,
-        "ctrl": 0,
-        "alt": 1,
-        "space_type": "VIEW_3D",
-        "region_type": "WINDOW",
-        "keywords": {},
-    },
-    {
-        "keymap_operator": OBJECT_OT_sort_items_on_axis.bl_idname,
-        "name": "Object Mode",
-        "letter": "O",
-        "shift": 1,
-        "ctrl": 0,
-        "alt": 1,
-        "space_type": "VIEW_3D",
-        "region_type": "WINDOW",
-        "keywords": {},
-    },
-]
+# kms = [
+#     {
+#         "keymap_operator": OBJECT_OT_align_objects.bl_idname,
+#         "name": "Object Mode",
+#         "letter": "X",
+#         "shift": 0,
+#         "ctrl": 0,
+#         "alt": 1,
+#         "space_type": "VIEW_3D",
+#         "region_type": "WINDOW",
+#         "keywords": {},
+#     },
+#     {
+#         "keymap_operator": OBJECT_OT_sort_items_on_axis.bl_idname,
+#         "name": "Object Mode",
+#         "letter": "O",
+#         "shift": 1,
+#         "ctrl": 0,
+#         "alt": 1,
+#         "space_type": "VIEW_3D",
+#         "region_type": "WINDOW",
+#         "keywords": {},
+#     },
+# ]

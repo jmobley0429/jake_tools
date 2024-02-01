@@ -2,12 +2,13 @@ from bpy.types import Menu
 
 from jake_tools.ops.mesh.collapse_edges_to_vert import MESH_OT_collapse_edges_to_vert
 from jake_tools.ops.mesh.select_boundary import MESH_OT_select_boundary_loops
+from jake_tools.ops.mesh.auto_mark_sharp_edges import MESH_OT_auto_mark_sharp
+
 
 class MESH_MT_edge_menu(Menu):
     # label is displayed at the center of the pie menu.
     bl_idname = "MESH_MT_edge_menu"
     bl_label = "Edge Menu"
-    bl_options = {"REGISTER", "UNDO"}
 
     def draw(self, context):
         layout = self.layout
@@ -47,7 +48,7 @@ class MESH_MT_edge_menu(Menu):
         col.operator(MESH_OT_select_boundary_loops.bl_idname, text="Boundary Loop")
         # TOP LEFT - set sharps
         col = pie.split().column()
-        col.operator("mesh.mark_sharp", text="Mark Sharp")
+        col.operator(MESH_OT_auto_mark_sharp.bl_idname, text="Auto Mark Sharp")
         op = col.operator("mesh.mark_sharp", text="Clear Sharp")
         op.clear = True
         col.operator("mesh.boundary_to_sharp")
@@ -68,7 +69,7 @@ class MESH_MT_edge_menu(Menu):
 
         # Bottom
         col = pie.split().column()
-        col.ui_units_x += 5 
+        col.ui_units_x += 5
         row = col.row(align=True)
         row.operator("mesh.edge_split")
         row = col.row(align=True)
@@ -77,6 +78,7 @@ class MESH_MT_edge_menu(Menu):
         spl.operator("mesh.edge_rotate", text="CCW").use_ccw = True
         row = col.row(align=True)
         row.operator("mesh.offset_edge_loops_slide")
+
 
 kms = [
     {

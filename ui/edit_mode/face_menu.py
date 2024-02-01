@@ -1,11 +1,11 @@
 from bpy.types import Menu
 import numpy as np
 
+
 class MESH_MT_face_menu(Menu):
     # label is displayed at the center of the pie menu.
     bl_idname = "MESH_MT_face_menu"
     bl_label = "Face Pie Menu"
-    bl_options = {"REGISTER", "UNDO"}
 
     def draw(self, context):
         layout = self.layout
@@ -39,6 +39,7 @@ class MESH_MT_face_menu(Menu):
         pie.operator("mesh.solidify")
         pie.operator_context = "INVOKE_REGION_WIN"
         pie.operator("mesh.smart_grid_fill")
+
 
 kms = [
     {

@@ -1,10 +1,11 @@
-#node_editor
+# node_editor
 import bpy
+
 
 class NODE_OT_directional_node_align(bpy.types.Operator):
     bl_idname = "node.directional_align"
     bl_label = "Align Nodes"
-    bl_options = {'REGISTER', 'UNDO'}
+    bl_options = {"REGISTER", "UNDO"}
 
     direction: bpy.props.EnumProperty(
         items=(
@@ -13,9 +14,9 @@ class NODE_OT_directional_node_align(bpy.types.Operator):
             ("LEFT", "Left", "Left"),
             ("RIGHT", "Right", "Right"),
         ),
-        name='Direction',
-        description='Direction to align on.',
-        default=None,
+        name="Direction",
+        description="Direction to align on.",
+        default="TOP",
     )
 
     @classmethod
@@ -26,11 +27,13 @@ class NODE_OT_directional_node_align(bpy.types.Operator):
         sel_nodes = context.selected_nodes
         axis = "y" if self.direction in {"TOP", "BOTTOM"} else "x"
         min_max_func = min if self.direction in {"LEFT", "BOTTOM"} else max
+        print("DEBUG: ", self.direction, axis, min_max_func)
         loc = min_max_func([getattr(node.location, axis) for node in sel_nodes])
         for node in sel_nodes:
             setattr(node.location, axis, loc)
-        return {'FINISHED'}
-    
+        return {"FINISHED"}
+
+
 kms = [
     {
         "keymap_operator": "node.directional_align",

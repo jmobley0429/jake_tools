@@ -1,9 +1,9 @@
 from bpy.types import Menu
 
+
 class PIE_MT_UVUnwrapPie(Menu):
     bl_idname = "PIE_MT_UVUnwrapPie"
     bl_label = "UV Unwrap Pie"
-    bl_options = {'REGISTER', 'UNDO'}
 
     def draw(self, context):
         layout = self.layout
@@ -20,9 +20,9 @@ class PIE_MT_UVUnwrapPie(Menu):
         # R
         pie.operator("uv.textools_rectify")
         # B
-        pie.operator('uv.seams_from_islands', text="Island Seams")
+        pie.operator("uv.seams_from_islands", text="Island Seams")
         # T
-        pie.operator('uv.toggle_uv_sync_selection')
+        pie.operator("uv.toggle_uv_sync_selection")
         col = pie.column()
         col.label(text="Unwrap")
         col.scale_x = 0.9
@@ -39,8 +39,7 @@ class PIE_MT_UVUnwrapPie(Menu):
         col.label(text="Add to Lock Groups")
         col.scale_x = 1
         spl = col.split()
-        spl.operator("uvpackmaster2.set_free_island_lock_group",
-                     text="Current")
+        spl.operator("uvpackmaster2.set_free_island_lock_group", text="Current")
         spl.operator("uvpackmaster2.set_island_lock_group", text="Free")
         spl = col.split()
         spl.prop(props, "lock_groups_enable", text="Enable")
@@ -66,8 +65,9 @@ class PIE_MT_UVUnwrapPie(Menu):
         layout.operator_context = "EXEC_DEFAULT"
         spl.operator("uv.textools_island_align_world", text="Align World")
 
+
 kms = [
-        {
+    {
         "keymap_operator": "wm.call_menu_pie",
         "name": "UV Editor",
         "letter": "Q",

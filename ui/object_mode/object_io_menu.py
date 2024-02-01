@@ -11,8 +11,8 @@ class OBJECT_MT_object_io_menu(Menu):
         pie = layout.menu_pie()
         pie.operator("import_scene.fbx", text="Import FBX")
         pie.operator("export_scene.fbx", text="Export FBX")
-        pie.operator("import_scene.obj", text="Import OBJ")
-        pie.operator("export_scene.obj", text="Export OBJ")
+        pie.operator("wm.obj_import", text="Import OBJ")
+        pie.operator("wm.obj_export", text="Export OBJ")
 
 
 kms = [
