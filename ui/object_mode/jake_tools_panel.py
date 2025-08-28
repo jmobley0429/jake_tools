@@ -7,7 +7,9 @@ from jake_tools.ops.mesh.cleanup_mesh import (
     MESH_OT_cleanup_select_small_faces,
 )
 
-from jake_tools.ops.modifier.triangulate_modifier_add import OBJECT_OT_triangulate_modifier_add
+from jake_tools.ops.modifier.triangulate_modifier_add import (
+    OBJECT_OT_triangulate_modifier_add,
+)
 from jake_tools.ops.object_mode.vertex_color_tools import (
     OBJECT_OT_CopyVcolFromActive,
     OBJECT_OT_generate_random_v_colors_per_obj,
@@ -43,6 +45,7 @@ def jake_tools_panel(context, layout):
     )
     op.color_picker = True
     row = col.row(align=True)
+    row.operator_context = "EXEC_DEFAULT"
     op = row.operator(
         OBJECT_OT_CopyVcolFromActive.bl_idname, text="Copy VCol from Active"
     )

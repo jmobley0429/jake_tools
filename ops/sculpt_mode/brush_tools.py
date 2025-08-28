@@ -1,9 +1,9 @@
 import bpy
 from pathlib import Path
-from .custom_operator import CustomModalOperator
+from jake_tools.ops.custom_operator import CustomModalOperator
 
 ROOT = Path(__file__).parent.parent.resolve()
-custom_shape_fp = ROOT.joinpath('resources', 'gizmo_circle_mesh.json')
+custom_shape_fp = ROOT.joinpath("resources", "gizmo_circle_mesh.json")
 
 
 class Brush:
@@ -61,7 +61,7 @@ class BRUSH_OT_toggle_stabilize_stroke(bpy.types.Operator):
         settings = br.brush
         attr = br.ss_attr
         setattr(settings, attr, not br.use_smooth_stroke)
-        return {'FINISHED'}
+        return {"FINISHED"}
 
 
 class BRUSH_OT_adjust_stabilize_radius(CustomModalOperator, bpy.types.Operator):
@@ -108,7 +108,8 @@ class BRUSH_OT_adjust_stabilize_radius(CustomModalOperator, bpy.types.Operator):
         print(delta)
         self.radius -= delta
         return {"RUNNING_MODAL"}
-    
+
+
 kms = [
     {
         "keymap_operator": BRUSH_OT_toggle_stabilize_stroke.bl_idname,

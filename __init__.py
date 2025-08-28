@@ -20,7 +20,7 @@ ROOT_DIR = Path(__file__).parent
 
 importer = Importer(ROOT_DIR)
 imported_modules = importer.import_modules()
-classes = importer.get_classes(imported_modules)
+classes = list(importer.get_classes(imported_modules))
 
 addon_keymaps = []
 
@@ -43,5 +43,8 @@ def unregister():
     for mod in reversed(list(imported_modules)):
         if hasattr(mod, "register"):
             mod.unregister()
-        for cls in classes:
+    for cls in reversed(classes):
+        try:
             bpy.utils.unregister_class(cls)
+        except RuntimeError:
+            print(cls)

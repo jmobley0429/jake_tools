@@ -1,7 +1,9 @@
 import bpy
 from bpy.types import Menu
 
+
 OBJECT_DISPLAY_TYPES = ["BOUNDS", "WIRE", "SOLID", "TEXTURED"]
+SHADING_COLOR_TYPES = ["MATERIAL", "OBJECT", "RANDOM", "TEXTURE", "VERTEX", "SINGLE"]
 
 
 class VIEW3D_MT_PIE_display_options(Menu):
@@ -15,8 +17,12 @@ class VIEW3D_MT_PIE_display_options(Menu):
     def draw(self, context):
         layout = self.layout
         pie = layout.menu_pie()
+        # for _type in OBJECT_DISPLAY_TYPES:
+        #     prop = pie.prop(context.object, _type, text=_type.capitalize())
         pie.prop_tabs_enum(context.object, "display_type")
         pie.prop(context.object, "show_in_front")
+        box = pie.box()
+        prop = box.prop(context.space_data.shading, "color_type")
 
 
 kms = [

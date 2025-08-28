@@ -15,7 +15,17 @@ class MESH_MT_face_menu(Menu):
         op = pie.operator("mesh.faces_select_linked_flat")
         op.sharpness = np.radians(25)
         op = pie.operator("mesh.beautify_fill")
-        op = pie.operator("mesh.quads_convert_to_tris")
+        # op = pie.operator("mesh.quads_convert_to_tris")
+        box = pie.box()
+        box.label(text="Normals")
+        box.scale_x *= 0.5
+        col = box.column()
+        row = col.row()
+        spl = row.split()
+        op = row.operator("mesh.flip_normals", text="Flip")
+        op = row.operator("mesh.normals_make_consistent", text="Recalc")
+        op.inside = False
+
         box = pie.box()
         box.scale_x *= 0.5
         col = box.column()
